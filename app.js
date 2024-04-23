@@ -9,14 +9,17 @@ let message = 'server is running on port 3001';
 
 
 //Rutas Crud
-router.post("/", async (req, res)=>{
+router.post("/",  async (req, res)=>{
     const body = req.body;
     const respuesta = await ModelUser.create(body)
     res.send(respuesta);
 })
 
-router.get("/", (req, res) => {
-    res.send('prueba');
+
+
+router.get("/", async(req, res) => {
+    const respuesta = await ModelUser.find();
+    res.send(respuesta);
 })
 
 app.use(express.json())
