@@ -1,52 +1,21 @@
+require('dotenv').config(); 
 const express = require('express');
 const dbconnect = require('./config');
-const app = express();
-const router = express.Router();
-const ModelUser = require('./Models/userModel');
+const apiRoutes = require('./Routes/apiRoutes');
 
+const startServer = async () => {
+    const app = express();
+    
+    app.use(express.json());
+    
+    app.use('/api', apiRoutes);
 
-let message = 'server is running on port 3001';
+    await dbconnect();
 
+    const PORT = process.env.PORT;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+};
 
-//Rutas Crud
-router.post("/",  async (req, res)=>{
-    const body = req.body;
-    const respuesta = await ModelUser.create(body)
-    res.send(respuesta);
-})
-
-
-
-router.get("/", async(req, res) => {
-    const respuesta = await ModelUser.find();
-    res.send(respuesta);
-})
-
-
-router.get("/:id", async(req, res) => {
-    const id = req.params.id;
-    const respuesta = await ModelUser.findById(id);
-    res.send(respuesta);
-})
-
-router.put("/:id", async(req, res) => {
-    const body = req.body;
-    const id = req.params.id;
-    const respuesta = await ModelUser.findOneAndUpdate({_id: id}, body);
-    res.send(respuesta);
-})
-
-router.get("/:id", async(req, res) => {
-    const id = req.params.id;
-    const respuesta = await ModelUser.deleteOne({_id: id});
-    res.send(respuesta);
-})
-
-
-app.use(express.json())
-app.use(router)
-app.listen(3001, () => {
-    console.log(message);
-})
-
-dbconnect();
+startServer();
